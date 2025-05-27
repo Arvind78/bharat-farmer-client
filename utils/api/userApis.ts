@@ -6,10 +6,12 @@ interface ApiResponse<T = any> {
   data?: T;
 }
 
-// 🔹 Signup API
+
+
+
 export const userSignup = async (userData: any): Promise<ApiResponse> => {
   try {
-    const res = await axiosClient.post(`/api/users/signup`, userData);
+    const res = await axiosClient.post(`/api/users/auth/signup`, userData);
 
     return {
       success: true,
@@ -28,10 +30,10 @@ export const userSignup = async (userData: any): Promise<ApiResponse> => {
   }
 };
 
-// 🔹 Send OTP for Login
+
 export const sendLoginOtp = async (email: string): Promise<ApiResponse> => {
   try {
-    const res = await axiosClient.post(`/api/users/request-otp`, { email });
+    const res = await axiosClient.post(`/api/users/auth/request-otp`, { email });
 
     return {
       success: true,
@@ -49,14 +51,14 @@ export const sendLoginOtp = async (email: string): Promise<ApiResponse> => {
   }
 };
 
-// 🔹 User Login with OTP
+ 
 export const userLogin = async (
   email: string,
   otp: number | string,
   notificationToken: string
 ): Promise<ApiResponse> => {
   try {
-    const res = await axiosClient.post(`/api/users/verify-otp`, {
+    const res = await axiosClient.post(`/api/users/auth/verify-otp`, {
       email,
       otp,
       notificationToken,
@@ -78,3 +80,41 @@ export const userLogin = async (
     };
   }
 };
+
+
+export const userUpdate = async(userData:any): Promise <ApiResponse> =>{
+  try {
+  const res = await axiosClient.post(`/api/users/update`,userData);    
+  return {
+      success: true,
+      data: res.data,
+      message: "user deteils update successful",
+    };
+  } catch (error:any) {
+      const errorMessage =
+      error?.response?.data?.message ||
+      error?.message ||
+      "User deteils update failed.";
+    return {
+      success: false,
+      message: errorMessage,
+    }; 
+  }
+}
+
+export const uploadProfilePicture = async(formData:FormData,userId:any)=>{
+  try {
+      const response = await axiosClient.post(`/api/users/update-profile-picture/${userId}`,formData);
+        return {
+      success: true,
+      data: response.data,
+       message: "user profile picture update successful",
+    };
+  } catch (error:any) {
+     const errorMessage=error.response.data.message || error.message  ||  "User profile picture update failed.";
+     return {
+      message:errorMessage,
+      success:false,
+     }
+  }
+}
